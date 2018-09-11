@@ -1,11 +1,14 @@
-<template>
-  <div>
-    home页面
-  </div>
+<template lang='pug'>
+ .home-page-wrapper
+  head-top
 </template>
 <script>
+import headTop from '../../components/header/head'
 export default {
   name: 'home',
+  components: {
+    headTop
+  },
   data () {
     return {
 
@@ -17,5 +20,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@import '../../style/mixin'
 
 </style>
