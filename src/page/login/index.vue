@@ -26,22 +26,21 @@
       p 注册过的用户可凭账号密码登录
     .button-container.text-white
       .button-wrapper
-        button(:class="canSubmit? 'primaryStyle':'defaultStyle'") 登录
+        button(:class="canSubmit? 'primaryStyle':'defaultStyle'" @click='loginMobile') 登录
     .change-login(@click='changeLoginWay') {{loginWay?'使用密码登录':'使用短信验证码登录'}}
 </template>
 <script>
 import headTop from '@/components/header'
 import { Field, CellGroup, Switch, Button, Toast } from 'vant'
-import {getcaptchas, mobileCode} from '@/service/getDate'
+import {getcaptchas, mobileCode, accountLogin} from '@/service/getDate'
 export default {
   data () {
     return {
-      loginWay: true, // 登录方式默认短信登录
+      loginWay: false, // 登录方式默认短信登录
       showPassword: false, // 是否显示密码
       password: '', // 密码
       userAccount: '', // 账号
       captchaCodeImg: '', // 图片验证码
-      canSubmit: false, // 所有信息是否全部正确输入
       computedTime: 0, // 倒计时
       phoneNumber: '' // 电话号码
 
@@ -58,8 +57,15 @@ export default {
   computed: {
     vertifyPhoneNumber () {
       return /^1\d{10}$/gi.test(this.phoneNumber)
+    },
+    vertifyMobileCode () {
+      return /^\d{6}$/gi.test(this.mobileCode)
+    },
+    canSubmit () {
+      if (this.userAccount && this.password && this.codeNumber) {
+        return true
+      }
     }
-
   },
   created () {
     this.getCaptchaCode()
@@ -94,6 +100,25 @@ export default {
       } else {
         Toast('手机号码不能为空')
       }
+    },
+    async loginMobile () {
+      if (this.loginWay) {
+        if (!this.vertifyPhoneNumber) {
+          Toast('手机号码输入不正确')
+        } else if (!this.vertifyMobileCode) {
+          Toast('验证码不正确')
+        }
+      } else {
+        if (!this.userAccount) {
+          Toast('请输入手机号/用户名/邮箱')
+        } else if (!this.password) {
+          Toast('请输入密码')
+        } else if (!this.codeNumber) {
+          Toast('请输入验证码')
+        }
+      }
+      let res = await accountLogin(this.userAccount, this.password, this.codeNumber)
+      console.log(res)
     }
   }
 }
