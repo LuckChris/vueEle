@@ -13,7 +13,7 @@
         van-field( label="账号"  clearable placeholder="请输入您的账号" v-model.lazy='userAccount'  required)
         van-field( label="密码"  placeholder="请输入您的密码", v-model='password' clearable required)
         van-field.verify-code( label="验证码" maxlength='4'
-                  placeholder="请输入验证码" v-model='codeNumber' clearable required)
+                  placeholder="请输入验证码" v-model='codeNumber'  required)
       .verify-pic
         .change-image
           .left-image(v-if='captchaCodeImg')
@@ -42,7 +42,9 @@ export default {
       userAccount: '', // 账号
       captchaCodeImg: '', // 图片验证码
       computedTime: 0, // 倒计时
-      phoneNumber: '' // 电话号码
+      phoneNumber: '', // 电话号码
+      codeNumber: '',
+      userInfo: null
 
     }
   },
@@ -54,6 +56,9 @@ export default {
     [Button.name]: Button
 
   },
+  watch: {
+
+  },
   computed: {
     vertifyPhoneNumber () {
       return /^1\d{10}$/gi.test(this.phoneNumber)
@@ -62,10 +67,11 @@ export default {
       return /^\d{6}$/gi.test(this.mobileCode)
     },
     canSubmit () {
-      if (this.userAccount && this.password && this.codeNumber) {
+      if (this.userAccount && this.password && (this.codeNumber.length === 4)) {
         return true
       }
     }
+
   },
   created () {
     this.getCaptchaCode()
@@ -116,9 +122,16 @@ export default {
         } else if (!this.codeNumber) {
           Toast('请输入验证码')
         }
+        this.userInfo = await accountLogin(this.userAccount, this.password, this.codeNumber)
       }
-      let res = await accountLogin(this.userAccount, this.password, this.codeNumber)
-      console.log(res)
+
+      if (!this.userInfo.user_id) {
+        Toast(this.userInfo.message)
+        if (!this.loginWay) {
+          this.getCaptchaCode()
+        }
+      } else {
+      }
     }
   }
 }

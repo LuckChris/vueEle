@@ -7,26 +7,27 @@
         p 当前定位城市：
       .guass-city-right
         p 定位不准时，请在城市列表中选择
-    router-link.guass-city(to='')
-      p 深圳
+    router-link.guass-city(:to="'/city/' + guessCityid")
+      p {{guessCity}}
       svg.arrow-right
         use(xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right")
     .hot-city-wrapper
       .hot-city-title 热门城市
       .hot-city-content.clear
-        ul(v-for='item in 8')
-          router-link.city-item(tag="li" to ='') 上海
+        ul(v-for='item in hotCity')
+          router-link.city-item(tag="li" :to ="'/city/' + item.id" :key='item.id') {{item.name}}
     .all-city-wrapper
       .city-order-number
         ul
-          li.letter-classify(v-for='(item,index) in 6')
-            h4 A
+          li.letter-classify(v-for='(item,key,index) in sortCityGroup')
+            h4 {{key}}
               span(v-if='index===0') (按字母排序)
             ul.city-content.clear
-              router-link(tag='li' to ='' v-for='item in 12') 安徽
+              router-link.ellipsis(tag='li'  v-for='i in item' :to ="'/city/' + i.id" :key='item.id') {{i.name}}
 </template>
 <script>
 import headTop from '../../components/header'
+import {guessCity, hotCity, groupCity} from '@/service/getDate'
 export default {
   name: 'home',
   components: {
@@ -34,6 +35,10 @@ export default {
   },
   data () {
     return {
+      guessCity: '', // 默认当前城市
+      guessCityid: '', // 当前城市id
+      hotCity: [], // 热门城市
+      groupCity: {}// 所有城市
 
     }
   },
@@ -42,7 +47,31 @@ export default {
     realod () {
       window.location.reload()
     }
-
+  },
+  mounted () {
+    guessCity().then(res => {
+      this.guessCity = res.name
+      this.guessCityid = res.id
+    })
+    hotCity().then(res => {
+      this.hotCity = res
+    })
+    groupCity().then(res => {
+      this.groupCity = res
+    })
+  },
+  computed: {
+    sortCityGroup () {
+      let sortobj = {}
+      for (let i = 65; i <= 90; i++) {
+        // String.formCharCode() 可接受一个指定的unicode值，然后返回一个字符串
+        // 例如  String.formCharCode(65) 输出的值是 A
+        if (this.groupCity[String.fromCharCode(i)]) {
+          sortobj[String.fromCharCode(i)] = this.groupCity[String.fromCharCode(i)]
+        }
+      }
+      return sortobj
+    }
   },
   created () {
 

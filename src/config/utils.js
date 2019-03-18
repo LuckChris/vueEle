@@ -12,7 +12,7 @@ export const setLS = (name, content) => {
 // 获取localStorage
 export const getLS = name => {
   if (!name) return
-  window.localStorage.getItem(name)
+  return window.localStorage.getItem(name)
 }
 
 // 删除localStorage
