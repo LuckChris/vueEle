@@ -6,6 +6,9 @@ const profile = r => require.ensure([], () => r(require('../page/profile')), 'pr
 const city = r => require.ensure([], () => r(require('../page/city/index')), 'city')
 const msite = r => require.ensure([], () => r(require('../page/msite')), 'msite')
 const food = r => require.ensure([], () => r(require('../page/food')), 'food')
+const search = r => require.ensure([], () => r(require('../page/search')), 'search')
+const orderList = r => require.ensure([], () => r(require('../page/orderList')), 'orderList')
+const userCenter = r => require.ensure([], () => r(require('../page/userCenter')), 'userCenter')
 
 export default [{
   path: '/',
@@ -40,6 +43,21 @@ export default [{
       path: '/food',
       name: 'food',
       component: food
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: search
+    },
+    {
+      path: '/orderList',
+      name: 'orderList',
+      component: orderList
+    },
+    {
+      path: '/userCenter',
+      name: 'userCenter',
+      component: userCenter
     }
   ]
 }]

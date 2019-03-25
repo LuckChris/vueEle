@@ -2,11 +2,9 @@
 .msite-content-wrapper
   head-top(signin-up ='msite')
     router-link.search-icon(to='/search/geohash' slot='search')
-      svg(width= '100%' height= '100%' xmlns="http://www.w3.org/2000/svg" version="1.1" )
-        circle(cx="8" cy="8" r="7" stroke="rgb(255,255,255)" stroke-width="1" fill="none")
-        line(x1="14" y1="14" x2="20" y2="20" style="stroke:rgb(255,255,255)stroke-width:2")
+      i.iconfont.iconxiaoxi-.search-icon 
     router-link.msite-title(to='/home' slot='msite-title')
-      span.title-text.ellipsis {{choosePlaceName}}
+      span.title-text.ellipsis {{choosePlaceName}} 
   .food-types-list
     swiper(:options='swiperOption')
       swiper-slide(v-for='(item,index) in foodTypes' :key='index')
@@ -15,13 +13,21 @@
             img(:src='imgBaseUrl + foodItem.image_url')
             span {{foodItem.title}}
       .swiper-pagination(slot='pagination')
+  .middle-line    
+  .store-list
+    .store-title-wrapper
+      i.iconfont.iconshangjia
+      .store-title 附近商家
+    shop-list(v-if='hasGetDate')
   footer-guide
 
 </template>
 <script>
 import headTop from '@/components/header'
-import { msiteAddress, msiteFoodTypes } from '@/service/getDate'
+import { msiteAddress, msiteFoodTypes, guessCity } from '@/service/getDate'
 import footerGuide from '@/components/footer/foodGuide.vue'
+import shopList from '@/components/common/shopList'
+import { mapMutations } from 'vuex';
 export default {
   data () {
     return {
@@ -38,15 +44,25 @@ export default {
           type: 'bullets',
           clickable: true
         }
-      }
+      },
+      hasGetDate:false
     }
   },
   async beforeMount () {
-    this.geohash = this.$route.query.geohash
+    
+    if(!this.$route.query.geohash) {
+      const address = await guessCity()
+      this.geohash = address.latitude + ',' + address.longitude
+    } else {
+      this.geohash = this.$route.query.geohash
+    }
+    this.SAVE_GEOHASH(this.geohash) // 记录经纬度
     let res = await msiteAddress(this.geohash)
+    console.log(res +'度数')
     this.choosePlaceName = res.name
+    this.hasGetDate = true
   },
-  components: { headTop, footerGuide },
+  components: {headTop, footerGuide, shopList},
   async mounted () {
     let res = await msiteFoodTypes(this.geohash)
     let resLength = res.length
@@ -61,7 +77,8 @@ export default {
     // 解码url地址，
     getCategoryId (url) {
 
-    }
+    },
+    ...mapMutations(['SAVE_GEOHASH'])
   }
 }
 </script>
@@ -70,8 +87,8 @@ export default {
 .msite-content-wrapper {
   width: 100%;
   .search-icon {
-    left: 0.8rem;
-    @include wh(0.9rem, 0.9rem);
+    left: 0.3rem;
+    font-size: 1.2rem;
     @include ct;
   }
   .msite-title {
@@ -125,6 +142,30 @@ export default {
    .swiper-pagination-fraction, .swiper-pagination-custom, .swiper-container-horizontal > .swiper-pagination-bullets{
      bottom:-6px;
    }
+  }
+  .middle-line {
+    background-color: #f5f5f5;
+    height: .64rem;
+    border-top: 0.08rem solid #e4e4e4;
+    border-bottom: 0.08rem solid #e4e4e4;
+    box-sizing: border-box;
+  }
+  .store-list{
+    background-color: #fff;
+    .store-title-wrapper{
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding-left: 0.8rem;
+      padding-top: .8rem;
+      padding-bottom: 1rem;
+    }
+    .store-title{
+      font-size: 0.72rem;
+      padding-left: .4rem;
+      
+    }
+
   }
 }
 </style>
