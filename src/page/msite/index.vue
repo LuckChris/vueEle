@@ -57,8 +57,9 @@ export default {
       this.geohash = this.$route.query.geohash
     }
     this.SAVE_GEOHASH(this.geohash) // 记录经纬度
+    
     let res = await msiteAddress(this.geohash)
-    console.log(res +'度数')
+    this.RECORD_ADDRESS(res) // 记录当前的经纬度
     this.choosePlaceName = res.name
     this.hasGetDate = true
   },
@@ -78,7 +79,7 @@ export default {
     getCategoryId (url) {
 
     },
-    ...mapMutations(['SAVE_GEOHASH'])
+    ...mapMutations(['SAVE_GEOHASH','RECORD_ADDRESS'])
   }
 }
 </script>

@@ -1,4 +1,7 @@
-import { RECORD_USERINFO, GET_USERINFO, SAVE_GEOHASH } from './mutation-types.js'
+import { RECORD_USERINFO,
+        GET_USERINFO,
+        SAVE_GEOHASH ,
+        RECORD_ADDRESS} from './mutation-types.js'
 import { setLS } from '@/config/utils.js'
 
 export default {
@@ -14,5 +17,10 @@ export default {
   // 记录经纬度
   [SAVE_GEOHASH](state,geohash) {
     state.geohash = geohash
+  },
+  // 记录经纬度
+  [RECORD_ADDRESS](state,{latitude,longitude}) {
+    state.longitude = longitude,
+    state.latitude = latitude
   }
 }

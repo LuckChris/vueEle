@@ -23,10 +23,10 @@
             h4 {{key}}
               span(v-if='index===0') (按字母排序)
             ul.city-content.clear
-              router-link.ellipsis(tag='li'  v-for='i in item' :to ="'/city/' + i.id" :key='item.id') {{i.name}}
+              router-link.ellipsis(tag='li'  v-for='i in item' :to ="'/city/' + i.id" :key='item.id') {{i.name}}       
 </template>
 <script>
-import headTop from '../../components/header'
+import headTop from '@/components/header'
 import {guessCity, hotCity, groupCity} from '@/service/getDate'
 export default {
   name: 'home',

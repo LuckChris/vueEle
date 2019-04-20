@@ -1,37 +1,58 @@
 <template lang='pug'>
 .shop-list-container
-  .shop-list(v-for='item in 5')
+  .shop-list(v-for='(item,index) in shopList' :key='index')
     .shop-list-left
       img.shop-img(src='https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3222698960,2408242127&fm=26&gp=0.jpg')
       .shop-info
         .info-top
           .brand-name 品牌
-          .shop-title 效果演示
+          .shop-title {{item.name}}
         .info-middle
           rate-star
-            .grade-num 3.7
-          .month-count 月销106单
+            .grade-num {{item.rating}}
+          .month-count 月销{{item.recent_order_num}}单
         .info-bottom
-          .price-enough ￥20起送/配送费约￥5    
+          .price-enough ￥{{item.float_minimum_order_amount}}起送/{{item.piecewise_agent_fee.tips}}    
     .shop-list-right
       .tag-name
         span 保
         span 准
         span 票
       .deliver-type
-        span 蜂鸟专送
+        span {{item.delivery_mode.text}}
         span 准时达
       .distance-time
-        span 112.5公里/
-        span.time 1小时31分钟    
+        span {{item.distance}} /
+        span.time {{item.order_lead_time}}    
 
 </template>
 <script>
 import rateStar from './star'
+import {shopList} from '@/service/getDate'
+import { mapState } from 'vuex';
 export default {
   components:{rateStar},
   data () {
     return {
+      offset:'',
+      shopList:[]
+    }
+  },
+  computed:{
+    ...mapState(
+      ['latitude','longitude']
+    )
+
+  },
+  mounted() {
+    console.log(this.latitude + '经纬度')
+    this.initData()
+
+  },
+  methods:{
+   async initData() {
+      let res = await shopList(this.latitude , this.longitude, this.offset)
+      this.shopList = res
     }
   }
 }
@@ -75,7 +96,7 @@ export default {
         }
         .info-middle{
            font-size: .4rem;
-           padding: .3rem 0;
+           padding: .5rem 0;
            display: flex;
            justify-content: flex-start;
            align-items: center;
@@ -101,7 +122,7 @@ export default {
        }
       }
       .deliver-type{
-        padding: .4rem 0;
+        padding: .6rem 0;
         span:first-child{
           background-color: #3690e1;
           color: #fff;
