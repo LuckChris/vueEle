@@ -1,14 +1,24 @@
 <template lang='pug'>
-.search-container 个人中心页面的内容
+.search-container {{msg}}
   footerGuide
 </template>
 <script>
 import footerGuide from '@/components/footer/foodGuide.vue'
+
 export default {
   data () {
-    return {}
+    return {
+      msg:'个人中心页面的内容'
+    }
   },
-  components: {footerGuide}
+  components: {footerGuide},
+  mounted() {
+    this.$loadingImg.show()
+    setTimeout(() => {
+    this.$loadingImg.hide()
+      this.msg = '加载完辽'
+    },5000)
+  }
 }
 </script>
 <style lang="scss">

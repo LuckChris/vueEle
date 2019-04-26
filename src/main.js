@@ -7,6 +7,12 @@ import './config/rem'
 import FastClick from 'fastclick'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import 'swiper/dist/css/swiper.css'
+import Loading from './components/loading/loading'
+Vue.use(Loading)
+
+import LoadImg from'./components/loadImg/index'
+Vue.use(LoadImg)
+
 
 if ('addEventListener' in document) {
   document.addEventListener('DOMContentLoaded', function () {
