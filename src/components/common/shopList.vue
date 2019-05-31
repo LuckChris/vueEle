@@ -1,41 +1,44 @@
 <template lang='pug'>
 .shop-list-container
-  .shop-list(v-for='(item,index) in shopList' :key='index')
-    .shop-list-left
-      img.shop-img(src='https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3222698960,2408242127&fm=26&gp=0.jpg')
-      .shop-info
-        .info-top
-          .brand-name 品牌
-          .shop-title {{item.name}}
-        .info-middle
-          rate-star
-            .grade-num {{item.rating}}
-          .month-count 月销{{item.recent_order_num}}单
-        .info-bottom
-          .price-enough ￥{{item.float_minimum_order_amount}}起送/{{item.piecewise_agent_fee.tips}}    
-    .shop-list-right
-      .tag-name
-        span 保
-        span 准
-        span 票
-      .deliver-type
-        span {{item.delivery_mode.text}}
-        span 准时达
-      .distance-time
-        span {{item.distance}} /
-        span.time {{item.order_lead_time}}    
+  router-link(:to='{path:"shop"}')
+    .shop-list(v-for='(item,index) in shopList' :key='index')
+      .shop-list-left
+        img.shop-img(:src="imgBaseUrl + item.image_path")
+        .shop-info
+          .info-top
+            .brand-name 品牌
+            .shop-title {{item.name}}
+          .info-middle
+            rate-star
+              .grade-num {{item.rating}}
+            .month-count 月销{{item.recent_order_num}}单
+          .info-bottom
+            .price-enough ￥{{item.float_minimum_order_amount}}起送/{{item.piecewise_agent_fee.tips}}
+      .shop-list-right
+        .tag-name
+          span 保
+          span 准
+          span 票
+        .deliver-type
+          span {{item.delivery_mode.text}}
+          span 准时达
+        .distance-time
+          span {{item.distance}} /
+          span.time {{item.order_lead_time}}
 
 </template>
 <script>
 import rateStar from './star'
 import {shopList} from '@/service/getDate'
 import { mapState } from 'vuex';
+import {imgBaseUrl} from '@/config/env'
 export default {
   components:{rateStar},
   data () {
     return {
       offset:'',
-      shopList:[]
+      shopList:[],
+      imgBaseUrl
     }
   },
   computed:{
@@ -64,7 +67,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: .3rem 0;
+    padding: .3rem .6rem;
     border-bottom: .05rem solid #f1f1f1;
     .shop-list-left{
       display: flex;
@@ -83,15 +86,22 @@ export default {
           justify-content: flex-start;
           align-items: center;
           .brand-name{
-            width: 1.7rem;
             font-size: .68rem;
             background-color: #ffdb26;
             border-radius: .15rem;
             text-align: center;
+            font-size: 0.4rem;
+            padding: 0.15rem;
+            margin-right: .2rem;
           }
           .shop-title{
-            font-size: .8rem;
+            width: 4.5rem;
+            font-size: .7rem;
             font-weight: bold;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+
           }
         }
         .info-middle{
@@ -107,11 +117,10 @@ export default {
         .info-bottom{
           font-size: .36rem;
         }
-      }      
+      }
     }
     .shop-list-right{
       font-size: .46rem;
-      padding-right: 0.6rem;
       text-align: right;
       .tag-name{
         color: #999;
@@ -126,7 +135,7 @@ export default {
         span:first-child{
           background-color: #3690e1;
           color: #fff;
-          padding: .04rem 0.1rem;    
+          padding: .04rem 0.1rem;
           border-radius: .2rem;
         }
         span:last-child{
@@ -134,7 +143,7 @@ export default {
           color: #3690e1;
           text-align: center;
           margin-left: .5rem;
-          padding: .04rem 0.1rem;  
+          padding: .04rem 0.1rem;
           border-radius: .2rem;
         }
       }

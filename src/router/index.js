@@ -9,6 +9,7 @@ const food = r => require.ensure([], () => r(require('../page/food')), 'food')
 const search = r => require.ensure([], () => r(require('../page/search')), 'search')
 const orderList = r => require.ensure([], () => r(require('../page/orderList')), 'orderList')
 const userCenter = r => require.ensure([], () => r(require('../page/userCenter')), 'userCenter')
+const shop =r => require.ensure([],() => r(require('../page/shop')),'shop')
 
 export default [{
   path: '/',
@@ -58,6 +59,11 @@ export default [{
       path: '/userCenter',
       name: 'userCenter',
       component: userCenter
+    },
+    {
+      path: '/shop',
+      name: 'shop',
+      component: shop
     }
   ]
 }]

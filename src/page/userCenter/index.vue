@@ -20,6 +20,8 @@ export default {
     },5000)
   }
 }
+
+
 </script>
 <style lang="scss">
 .search-container{
