@@ -2,18 +2,18 @@
 .msite-content-wrapper
   head-top(signin-up ='msite')
     router-link.search-icon(to='/search/geohash' slot='search')
-      i.iconfont.iconxiaoxi-.search-icon 
+      i.iconfont.iconxiaoxi-.search-icon
     router-link.msite-title(to='/home' slot='msite-title')
-      span.title-text.ellipsis {{choosePlaceName}} 
+      span.title-text.ellipsis {{choosePlaceName}}
   .food-types-list
     swiper(:options='swiperOption')
       swiper-slide(v-for='(item,index) in foodTypes' :key='index')
         .swiper-item-warpper
-          router-link.item-link(to="{path:'/food',query:{title:foodItem.title,restaurant_category_id:getCategoryId(foodItem.link)}}"  v-for='(foodItem,index) in item' :key='index')
+          .swiper-item(@click="swiperClick(foodItem)" v-for='(foodItem,index) in item' :key='index')
             img(:src='imgBaseUrl + foodItem.image_url')
             span {{foodItem.title}}
       .swiper-pagination(slot='pagination')
-  .middle-line    
+  .middle-line
   .store-list
     .store-title-wrapper
       i.iconfont.iconshangjia
@@ -27,8 +27,8 @@ import headTop from '@/components/header'
 import { msiteAddress, msiteFoodTypes, guessCity } from '@/service/getDate'
 import footerGuide from '@/components/footer/foodGuide.vue'
 import shopList from '@/components/common/shopList'
-import { mapMutations } from 'vuex';
 export default {
+  components: {headTop, footerGuide, shopList},
   data () {
     return {
       choosePlaceName: '请选择地址...', // 选择的地点名字
@@ -49,37 +49,53 @@ export default {
     }
   },
   async beforeMount () {
-    
+
     if(!this.$route.query.geohash) {
       const address = await guessCity()
       this.geohash = address.latitude + ',' + address.longitude
     } else {
       this.geohash = this.$route.query.geohash
     }
-    this.SAVE_GEOHASH(this.geohash) // 记录经纬度
-    
+    this.$store.commit('saveGeohash', this.geohash)   // 记录经纬度
+
     let res = await msiteAddress(this.geohash)
-    this.RECORD_ADDRESS(res) // 记录当前的经纬度
+    console.log(res)
+    this.$store.commit('recordAddress', res)  // 记录当前的经纬度
     this.choosePlaceName = res.name
     this.hasGetDate = true
   },
-  components: {headTop, footerGuide, shopList},
-  async mounted () {
-    let res = await msiteFoodTypes(this.geohash)
-    let resLength = res.length
-    let resArr = [...res]
-    let foodArr = []
-    for (let i = 0, j = 0; i < resLength; i += 8, j++) {
-      foodArr[j] = resArr.splice(0, 8)
-    }
-    this.foodTypes = foodArr
+
+  mounted () {
+    msiteFoodTypes(this.geohash)
+    .then(res=> {
+      let resLength = res.length
+      let resArr = [...res]
+      let foodArr = []
+      for (let i = 0, j = 0; i < resLength; i += 8, j++) {
+        foodArr[j] = resArr.splice(0, 8)
+      }
+      this.foodTypes = foodArr
+    })
+
+
+
   },
   methods: {
     // 解码url地址，
     getCategoryId (url) {
 
     },
-    ...mapMutations(['SAVE_GEOHASH','RECORD_ADDRESS'])
+    // swiper 点击
+    swiperClick(item) {
+      this.$router.push({
+        path:'/food',
+        query:{
+          title:item.title,
+          restaurant_category_id: this.getCategoryId(item.link)
+        }
+      })
+
+     }
   }
 }
 </script>
@@ -122,13 +138,13 @@ export default {
         justify-content: center;
         align-items: center;
       }
-      // .swiper-item{
-      //   // width: 25%;
-      //   display: flex;
-      //   flex-direction: column;
-      //   justify-content: center;
-      //   align-items: center;
-      // }
+     .swiper-item{
+        width: 25%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+       }
       img {
         @include wh(1.8rem, 1.8rem);
         padding: .2rem;
@@ -164,7 +180,6 @@ export default {
     .store-title{
       font-size: 0.72rem;
       padding-left: .4rem;
-      
     }
 
   }

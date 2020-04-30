@@ -5,8 +5,8 @@
     .head-goback(v-if='goBack', @click="$router.go(-1)")
       svg(width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" version="1.1")
         polyline(points="12,18 4,9 12,0" style='fill:none;stroke:rgb(255,255,255);stroke-width:2')
-    router-link(:to="userInfo? '/profile' : '/login'" v-if='signinUp' class='head-login')
-      svg(class='user-avatar' v-if="userInfo")
+    router-link(:to="$store.state.isLogin ? '/profile' : '/login'" v-if='signinUp' class='head-login')
+      svg(class='user-avatar' v-if="$store.state.isLogin")
         use(xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#user")
       span.text-white(class='login-span' v-else) 登录|注册
     .title-head.ellipsis.text-center.text-white(v-if="headTitle")
@@ -17,29 +17,18 @@
     slot(name='changeLogin')
 </template>
 <script>
-import {mapState, mapActions} from 'vuex'
 export default{
   data () {
     return {
 
     }
   },
-  computed: {
-    ...mapState(['userInfo'])
-
-  },
   props: ['signinUp', 'headTitle', 'goBack'],
   methods: {
     reloadHandle () {
       window.location.reload()
     },
-    ...mapActions([
-      'getUserInfo'
-    ])
   },
-  mounted () {
-    this.getUserInfo()
-  }
 }
 </script>
 <style lang='scss' scoped>

@@ -5,10 +5,14 @@
 <script>
 import footerGuide from '@/components/footer/foodGuide.vue'
 export default {
-  data () {
-    return {}
+	components: {footerGuide},
+data () {
+	return {}
   },
-  components: {footerGuide}
+
+  mounted() {
+  	 // console.log(this.$store.state.userInfo)
+  }
 }
 </script>
 <style lang="scss">

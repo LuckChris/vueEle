@@ -73,7 +73,7 @@ export default {
     }
 
   },
-  created () {
+  mounted () {
     this.getCaptchaCode()
   },
   methods: {
@@ -111,27 +111,39 @@ export default {
       if (this.loginWay) {
         if (!this.vertifyPhoneNumber) {
           Toast('手机号码输入不正确')
-        } else if (!this.vertifyMobileCode) {
+          return
+        }
+        if (!this.vertifyMobileCode) {
           Toast('验证码不正确')
+          return
         }
       } else {
         if (!this.userAccount) {
           Toast('请输入手机号/用户名/邮箱')
-        } else if (!this.password) {
+          return
+        }
+        if (!this.password) {
           Toast('请输入密码')
-        } else if (!this.codeNumber) {
+          return
+        }
+        if (!this.codeNumber) {
           Toast('请输入验证码')
+          return
         }
         this.userInfo = await accountLogin(this.userAccount, this.password, this.codeNumber)
+        if (!this.userInfo.user_id) {
+          Toast(this.userInfo.message)
+          if (!this.loginWay) {
+            this.getCaptchaCode()
+          }
+        } else {
+          this.$store.commit('saveUserInfo', this.userInfo)
+          this.$router.push({
+            path:'/msite'
+          })
+        }
       }
 
-      if (!this.userInfo.user_id) {
-        Toast(this.userInfo.message)
-        if (!this.loginWay) {
-          this.getCaptchaCode()
-        }
-      } else {
-      }
     }
   }
 }
@@ -179,7 +191,6 @@ export default {
            }
          }
       }
-
     }
     }
     .login-tips{
@@ -191,7 +202,6 @@ export default {
       }
       p:last-child{
         text-indent: 2.6rem;
-
       }
       padding-bottom: .8rem;
     }
