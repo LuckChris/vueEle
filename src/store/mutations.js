@@ -12,7 +12,11 @@ export default {
     setLS('user_id', info.user_id)
   },
   // 获取用户信息存入
-  [GET_USERINFO] (state, info) {},
+  [GET_USERINFO] (state, info) {
+    state.userInfo = info
+    state.login = true
+    setLS('user_id', info.user_id)
+  },
 
   // 记录经纬度
   [SAVE_GEOHASH](state,geohash) {

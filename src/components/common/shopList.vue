@@ -30,31 +30,22 @@
 <script>
 import rateStar from './star'
 import {shopList} from '@/service/getDate'
-import { mapState } from 'vuex';
 import {imgBaseUrl} from '@/config/env'
 export default {
   components:{rateStar},
   data () {
     return {
       offset:'',
-      shopList:[],
-      imgBaseUrl
+      shopList: [],
+      imgBaseUrl  // 图片域名
     }
   },
-  computed:{
-    ...mapState(
-      ['latitude','longitude']
-    )
-
-  },
   mounted() {
-    console.log(this.latitude + '经纬度')
     this.initData()
-
   },
   methods:{
    async initData() {
-      let res = await shopList(this.latitude , this.longitude, this.offset)
+      let res = await shopList(this.$store.state.currentAddress.latitude , this.$store.state.currentAddress.longitude, this.offset)
       this.shopList = res
     }
   }
