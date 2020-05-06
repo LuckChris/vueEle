@@ -83,15 +83,22 @@ export default {
   methods: {
     // 解码url地址，
     getCategoryId (url) {
-
+      let urlDate = decodeURIComponent(url.split('=')[1].replace('&target_name',''))
+      if(/restaurant_category_id/gi.test(urlDate)) {
+        return JSON.parse(urlDate).restaurant_category_id.id
+      } else {
+        return ''
+      }
     },
     // swiper 点击
     swiperClick(item) {
+      console.log(item)
       this.$router.push({
         path:'/food',
         query:{
-          title:item.title,
-          restaurant_category_id: this.getCategoryId(item.link)
+          title: item.title,
+          restaurant_category_id: this.getCategoryId(item.link),
+          geohash: this.geohash
         }
       })
 
